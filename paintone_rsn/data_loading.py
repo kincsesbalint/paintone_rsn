@@ -168,11 +168,15 @@ def load_timeseries(ts_directory,
             scrubbingidx = np.insert(np.reshape(scrubbingidx, -1), 0, True, axis=0)
             scrubbingidx = scrubbingidx[numofexlcvolsatthebeg:]
             # print('this is the scrubbingidx what we loaded', scrubbingidx)
-            # print('this is the length of the scrubbing boolec:',len(scrubbingidx))
-            # print('the ts:'+len(ts))
+            #print('this is the length of the scrubbing boolec:',len(scrubbingidx))
+            #print('the ts:'+len(ts))
             ts = ts[scrubbingidx]
+            # print('-'*65)
+            # print((1 - len(ts)/192)*100)
+            # print('-' * 65)
         else:
             print('No scrubbing has happened')
+
 
         # standardise timeseries
         if standardise:
@@ -335,3 +339,17 @@ def load_behaviordata(includedsubj,
     return valencedata_wide_excl
 
 #def loadframewisedisplacement():
+def samplecalibration(sample1,
+                      sample2,
+                      observedvar='y_valpainlearn_acq',
+                      predictedvar='prediction_scr'):
+    sample1.loc[:,'study']='s1'
+    sample2.loc[:,'study']='s2'
+    #dataset=pd.concat([sample2,sample1], axis=0)[[observedvar,predictedvar,'study']]
+    s1_delta=sample1[observedvar].to_numpy().mean()-sample1[predictedvar].to_numpy().mean()
+    s2_delta=sample2[observedvar].to_numpy().mean()-sample2[predictedvar].to_numpy().mean()
+    sample1.loc[:,predictedvar+'_calib']=sample1[predictedvar]+s1_delta
+    sample2.loc[:,predictedvar+'_calib']=sample2[predictedvar]+s2_delta
+    concat_behav=pd.concat([sample1,sample2], axis=0)[[observedvar,predictedvar,predictedvar+'_calib','study']]
+
+    return concat_behav
