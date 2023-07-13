@@ -135,7 +135,7 @@ def load_timeseries(ts_directory,
     #     filelist = os.listdir(fddir[0])
     #     filelist.sort(key=lambda x: int(''.join(filter(str.isdigit, x))))
     for i in subjid_kept:
-        print('-'*65)
+        #print('-'*65)
         if origdatasets:
             if len(str(i)) == 1:
                 subjfile = ts_directory + subjchr + '0' + str(i) + '_ts.tsv'
@@ -143,7 +143,7 @@ def load_timeseries(ts_directory,
                 subjfile = ts_directory + subjchr + str(i) + '_ts.tsv'
         else:
             subjfile = ts_directory + subjchr + str(i) + '.tsv'
-        print(subjfile)
+        #print(subjfile)
         if keepgs:
             ts = pd.read_csv(subjfile, sep="\t")  # keep the global signal
             labels = pd.read_csv(subjfile, sep="\t").columns
@@ -162,7 +162,7 @@ def load_timeseries(ts_directory,
             else:
                 subjfddir =fddir[0] +  '/_calculate_FD_Power'+ str(i) + ".txt"
 
-            print('the fddir is specified by the user:\n' + subjfddir)
+            #print('the fddir is specified by the user:\n' + subjfddir)
             fd = pd.read_csv(subjfddir).to_numpy()
             scrubbingidx = fd < fdlimit
             scrubbingidx = np.insert(np.reshape(scrubbingidx, -1), 0, True, axis=0)
@@ -191,50 +191,6 @@ def load_timeseries(ts_directory,
 
     return timeseries, labels, loadedsubjpath, vectorzedlabelpairs, listoflabelpairs
 
-def load_timeseries_orig(ts_directory,
-                    subjid_kept,
-                    keepgs=True,
-                    standardise=True,
-                    fddir=[]):
-    '''
-    This functions aims to load the particiapnts' timeseries. It prints out the path of the loaded participants for double checking.
-
-    :param ts_files: the path to the timeseries files
-    :param subjid_kept: the index of participants (RPNID-based on the RPN output, that is the order of the participants and it starts with 0) which are included in the analysis, see returns of exclusion function
-    :param keepgs: if TRUE keep the global signal in the loaded dataframe
-    :param standardise: if TRUE a standard sclaer is used in every ROI's timeseries (default is TRUE)
-    :return: the list of timeseries of the included subjects, the ROI labels, and the loadedsubjectpath(this is only for double check if the of the ROI as
-    '''
-
-    ts_fullpathfs = timeseriespath(ts_directory)
-
-    timeseries = []
-    loadedsubjpath = []
-
-    for i, f in enumerate(ts_fullpathfs):
-
-        if i in subjid_kept:
-            print('This is the file what we load:',f)
-            if keepgs:
-                ts = pd.read_csv(f, sep="\t")  # keep the global signal
-                labels = pd.read_csv(ts_fullpathfs[0], sep="\t").columns
-            else:
-                ts = pd.read_csv(f, sep="\t").drop('GlobSig', 1).values  # delete the global signal
-                labels = pd.read_csv(ts_fullpathfs[0], sep="\t").columns[1:]
-            loadedsubjpath.append(f)
-
-            # standardise timeseries
-            if standardise:
-                ts = StandardScaler().fit_transform(ts)
-            else:
-                ts = np.array(ts)
-
-            timeseries.append(ts)
-    labels = pd.read_csv(ts_fullpathfs[0], sep="\t").columns
-
-    vectorzedlabelpairs,  listoflabelpairs = labelvectorizin(labels)
-
-    return timeseries, labels, loadedsubjpath, vectorzedlabelpairs, listoflabelpairs
 def labelvectorizin(labels):
 
     '''
