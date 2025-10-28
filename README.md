@@ -1,7 +1,7 @@
 RCPL signature (Resting-state functional Connectivity signature of Pain-related Learning)
 ==========================
 
-<img src="docs/fig1.pdf" alt="Diagram" width="700">
+<img src="docs/fig1.png" alt="Diagram" width="700">
 
 You can read more about the training, validation, specificity test, model interpretation in our Communications Biology paper: [Kincses et al](https://doi.org/10.1038/s42003-024-06574-y).
 
